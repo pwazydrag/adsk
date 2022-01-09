@@ -1,4 +1,4 @@
-# Automatyczna instalacja wordpress
+# Automatyczna instalacja Wordpress
 ## Zadania związane z bazą danych
 - Utworzenie folderu blog
 - Skopiowanie repozytorium bazy danych MariaDB
@@ -23,4 +23,5 @@
 - Skopiowanie pliku konfiguracyjnego "blog-vhost.conf"
 - Skopiowanie pliku konfiguracyjnego "wp-config.php"
 - Przeładowanie apache
+## Screen zainstalowanego Wordpressa
 ![](adsk1_.jpg)
