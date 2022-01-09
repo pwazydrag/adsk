@@ -1,0 +1,9 @@
+---
+   - name: "copy MariaDB repo cfg"
+      copy:
+        src: MariaDB.repo
+        dest: /etc/yum.repos.d/MariaDB.repo
+    - name: "install mariadb"
+      yum:
+        name: "{{ packages }}"
+        state: present
