@@ -1,112 +1,32 @@
 ---
 - hosts: wp_nodes
   become: yes
-  vars:
-    DB_NAME: blog
-    DB_USER: blog
-    DB_PW: blog!
+  vars_files:
+    - vars/main.yaml
   tasks:
-    #include_tasks: tasks/db_related.yaml
-    #include_tasks: tasks/os_packages.yaml
-    #include_tasks: tasks/wp_related.yaml
-    - name: "lets create hello world"
-      file:
-        path: ~/hello_worldddd.txt
-        state: touch
-    - name: "install http server"
-      yum: 
-      #https://docs.ansible.com/ansible/2.9/modules/yum_module.html#yum-module
-        name: httpd
-        state: present
-    - name: "copy MariaDB repo cfg"
-      copy:
-        src: MariaDB.repo
-        dest: /etc/yum.repos.d/MariaDB.repo
-    - name: "install mariadb"
-      yum:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - MariaDB-server
-          - MariaDB-client
-    - name: "install EPEL"
-      yum:
-        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-        state: present
-    - name: "install php repo"
-      yum:
-        name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
-        state: present
-    - name: "install php packages" 
-      yum:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - php80-php
-          - php80
-          - php80-php-mysqlnd
-          - php80-php-pecl-mysql
-    - name: "download wordpress && extract wp"
-      unarchive:
-        src: https://pl.wordpress.org/latest-pl_PL.tar.gz
-        dest: /var/www
-        remote_src: yes
-    - name: "copy vhost configuration"
-      copy:
-        src: blog-vhost.conf
-        dest: /etc/httpd/conf.d/blog.conf
-    - name: "www root exists"
-      file:
-        state: directory
-        path: /var/www/blog
-    - name: "reload mariadb"
-      systemd:
-        name: mariadb
-        state: started
-    - name: "install mysql related module"
-      yum:
-        name: MySQL-python
-        state: present
-    - name: "create wp's db"
-      mysql_db:
-        name: "{{DB_NAME}}"
-        state: present
-    - name: "create user && assign privileges"
-      mysql_user:
-        name: "{{DB_USER}}"
-        password: "{{DB_PW}}"
-        priv: "{{DB_NAME}}.*:ALL"
-        state: present
-    - name: "copy wp cfg"
-      template:
-        src: wp-config.php
-        dest: /var/www/wordpress/wp-config.php
-    - name: "reload apache"
-      systemd:
-        name: httpd
-        state: reloaded
+    - include_tasks: tasks/db_related.yaml
+    - include_tasks: tasks/os_packages.yaml
+    - include_tasks: tasks/wordpress_related.yaml
+
 - hosts: load_balancer
   become: yes
   vars:
     app_ips:
-    - 3.69.171.48:80
+      - 3.67.224.9:80
   tasks:
-   - name: install epel
-     yum:
-       name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-       state: present
-   - name: install nginx
-     yum:
-       name: nginx
-       state: present 
-   - name: put nginx conf
-     template:
-       src: lb.conf
-       dest: /etc/nginx/conf.d/Blog.conf
-   - name: reload nginx
-     systemd:
-       name: nginx
-       state: reloaded
-      
+    - name: install epel
+      yum:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        state: present
+    - name: install nginx
+      yum:
+        name: nginx
+        state: present
+    - name: put nginx conf
+      template:
+        src: files/lb.conf
+        dest: /etc/nginx/conf.d/Blog.conf
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
