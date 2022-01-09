@@ -19,4 +19,4 @@
 - Adres IP serwera proxy:
     - 3.71.94.78
 ## Screen aplikacji
-![](adsk2_.jpg)
+![](adsk2.jpg)

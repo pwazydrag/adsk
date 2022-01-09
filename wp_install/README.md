@@ -24,4 +24,4 @@
 - Skopiowanie pliku konfiguracyjnego "wp-config.php"
 - Przeładowanie apache
 ## Screen zainstalowanego Wordpressa
-![](adsk1_.jpg)
+![](adsk1.jpg)
